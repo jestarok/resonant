@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "resonant marketplace backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index",
+    "pullschema": "airtable-graphql pull --email=jesus9528@gmail.com --password=Jesram28 --base=appzeUDpZOqRjLPaJ"
+  },
+  "author": "jesus henriquez",
+  "license": "ISC",
+  "dependencies": {
+    "airtable-graphql": "^1.0.9",
+    "axios": "^0.21.0",
+    "bcrypt": "^5.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
