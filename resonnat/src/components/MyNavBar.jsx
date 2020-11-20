@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Navbar, Nav, Form, Button } from 'react-bootstrap/';
-import Logo from '../logo.png';
+import Logo from '../static/logo.png';
 
 class MyNavbar extends Component {
   constructor(props) {
@@ -11,12 +11,14 @@ class MyNavbar extends Component {
   render() {
     return (
       <Navbar bg="light" expand="lg">
-        <img
-          src={Logo}
-          style={{ width: '12vh', height: '12vh' }}
-          alt="Smiley face"
-        />
-        <Navbar.Brand href="/"> Resonat Marketplace</Navbar.Brand>
+        <Navbar.Brand href="/">
+          <img
+            src={Logo}
+            style={{ width: '7vh', height: '7vh', marginRight: '5vh' }}
+            alt="Smiley face"
+          />
+          Resonat Marketplace
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
