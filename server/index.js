@@ -8,6 +8,8 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 api = new AirtableGraphQL('key1E9cyPLu4piroN');
 const app = express();
+const { v4: uuidv4 } = require('uuid');
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const aws = require('aws-sdk');
@@ -157,7 +159,8 @@ app.post('/login', cors(), (req, res) => {
     .then(function (response) {
       // handle success
       let foundUser = false;
-      if (response.data.records > 0) {
+      console.log(response.data.records);
+      if (response.data.records.length > 0) {
         foundUser = response.data.records.sort(function (a, b) {
           return new Date(b.createdTime) - new Date(a.createdTime);
         })[0];
@@ -166,21 +169,25 @@ app.post('/login', cors(), (req, res) => {
 
       if (foundUser) {
         //   get user data
-        const success = false;
+        let success = false;
+        let username = '';
         axios
           .get(constants.GET_USER_URL + foundUser.id, {
             headers: {
               Authorization: 'Bearer ' + constants.AIRTABLE_API_TOKEN,
             },
           })
-          .then(function (response) {
+          .then(async function (response) {
             // handle success
-            console.log(response.data.fields);
-            console.log(req.body.password, response.data.fields.Password);
-            success = comparePassword(
-              req.body.password,
-              response.data.fields.Password
-            );
+            username = response.data.fields.username;
+            if (req.body.encrypted == 'true') {
+              success = await comparePassword(
+                req.body.password,
+                response.data.fields.Password
+              );
+            } else {
+              success = req.body.password == response.data.fields.Password;
+            }
           })
           .catch(function (error) {
             // handle error
@@ -189,13 +196,21 @@ app.post('/login', cors(), (req, res) => {
           .then(function () {
             // always executed
             if (success) {
-              res.send('Login successful');
+              res.send({
+                message: 'Login successful',
+                user: username,
+                success: true,
+                value: uuidv4(),
+              });
             } else {
-              res.send('Login failed');
+              res.send({
+                message: 'Login failed',
+                success: false,
+              });
             }
           });
       } else {
-        res.send('Login failed');
+        res.send({ message: 'Login failed', success: false });
       }
     })
     .catch(function (error) {
@@ -220,7 +235,7 @@ app.post('/register', cors(), (req, res) => {
         headers: { Authorization: 'Bearer ' + constants.AIRTABLE_API_TOKEN },
       }
     )
-    .then(function (response) {
+    .then(async function (response) {
       // handle success
 
       if (response.data.records.length > 0) {
@@ -243,7 +258,7 @@ app.post('/register', cors(), (req, res) => {
               records: [
                 {
                   fields: {
-                    Password: encryptPassword(fields.password),
+                    Password: await encryptPassword(fields.password),
                     'First Name': fields.firstName,
                     'Last Name': fields.lastName,
                     email: fields.email,
@@ -255,11 +270,27 @@ app.post('/register', cors(), (req, res) => {
             config
           )
           .then((result) => {
-            // Do somthing
-            console.log(result);
+            // Do something
+            console.log(result.data);
+            console.log(result.data.records);
+            let success = result.data.records.length > 0 ? true : false;
+            if (success) {
+              res.send({
+                message: 'Login successful',
+                user: result.data.records[0].fields.username,
+                success: true,
+                value: uuidv4(),
+              });
+            } else {
+              res.send({
+                message: 'Login failed',
+                success: false,
+              });
+              // res.send({ message: 'Login failed', login: false });
+            }
           })
           .catch((err) => {
-            // Do somthing
+            // Do something
             console.log(err);
           });
       }
@@ -284,15 +315,10 @@ api.listen(constants.PORT_GRAPHQL);
 async function encryptPassword(password) {
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
-  console.log(hash);
   return hash;
 }
 async function comparePassword(password, password2) {
   // updated
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
-  // ​
-  const isSame = await bcrypt.compare(password2, hash); // updated
-  console.log(isSame); // updated
+  const isSame = await bcrypt.compare(password, password2); // updated
   return isSame;
 }

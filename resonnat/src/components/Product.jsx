@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FURNITURES } from '../Utils/constants';
 import { Fragment } from 'react';
 import { Row, Card, Col, Button, Collapse, Form } from 'react-bootstrap';
@@ -10,12 +10,24 @@ import { useParams } from 'react-router-dom';
 
 const Product = (props) => {
   const { loading, data } = useQuery(FURNITURES);
+  const [pictureData, setPictureData] = useState('');
   const [showForm, setshowForm] = useState(false);
   const { id } = useParams();
   const [email, setEmail] = useState('');
   const toggleForm = () => {
     setshowForm(!showForm);
   };
+
+  useEffect(() => {
+    const PicureData = async () => {
+      const result = await axios.get('http://localhost:5000/pictures');
+
+      setPictureData(result.data);
+    };
+
+    PicureData();
+  }, []);
+
   const handleSubmit = (evt) => {
     evt.preventDefault();
     alert(`Submitting Name ${email}`);
@@ -41,18 +53,28 @@ const Product = (props) => {
   if (loading) {
     return <h1>Loading</h1>;
   } else {
+    const product = data.furnitures.find((product) => {
+      return product.id === id;
+    });
+    const productindex = data.furnitures.findIndex((product) => {
+      return product.id === id;
+    });
+
     return (
       <Fragment>
         <Row>
           <Col lg={{ span: 4 }}>
-            <h1 className="my-4">{data.furnitures[8].name}</h1>
-            <Card className="mt-4 mr-4 ml-4" style={{ border: 'none' }}>
+            <Card
+              className="mt-4 mr-4 ml-4"
+              style={{ border: 'none', paddingTop: '10vh' }}
+            >
+              <h1>{product.name}</h1>
               <Card.Title>
-                {data.furnitures[0].unitCost.replace('undefined', '$')}
+                {product.unitCost.replace('undefined', '$')}
               </Card.Title>
               <Card.Body>
                 <p>{'Dimensions: '}</p>
-                <p> {data.furnitures[0].sizeWxLxH}</p>
+                <p> {product.sizeWxLxH}</p>
                 <Button variant="dark" onClick={toggleForm}>
                   More info
                 </Button>
@@ -75,10 +97,19 @@ const Product = (props) => {
             </Card>
           </Col>
           <Col lg={{ span: 8 }} sm={{ span: 12 }}>
-            <Card className="mt-4 mr-4 ml-4">
+            <Card className="mt-4 mr-4 ml-4" style={{ border: 'none' }}>
               <Card.Img
                 variant="top"
-                src={'http://placehold.it/900x400'}
+                src={
+                  pictureData
+                    ? pictureData.records[productindex].fields.Picture[0].url
+                    : '#'
+                }
+                style={{
+                  // maxWidth: '',
+                  maxHeight: '50vh',
+                  objectFit: 'contain',
+                }}
                 alt={'media aviable soon'}
               />
               {/* <img
@@ -87,9 +118,7 @@ const Product = (props) => {
                 alt=""
               /> */}
               <Card.Body>
-                <p className="card-text text-justify">
-                  {data.furnitures[0].description}
-                </p>
+                <p className="card-text text-justify">{product.description}</p>
               </Card.Body>
             </Card>
           </Col>

@@ -10,13 +10,16 @@ const ProductList = () => {
   const { loading, data } = useQuery(FURNITURES);
 
   useEffect(() => {
+    let mounted = true;
     const PicureData = async () => {
       const result = await axios.get('http://localhost:5000/pictures');
-
-      setPictureData(result.data);
+      if (mounted) {
+        setPictureData(result.data);
+      }
     };
 
     PicureData();
+    return () => (mounted = false);
   }, []);
 
   if (loading) {

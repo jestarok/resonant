@@ -3,6 +3,8 @@ import { Form, Button, Card, Nav, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import querystring from 'querystring';
 import { REGISTER_URL } from '../Utils/constants';
+import { useHistory } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 
 const Registration = (props) => {
   const [username, setUsername] = useState('');
@@ -10,6 +12,7 @@ const Registration = (props) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
+  let history = useHistory();
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
@@ -33,6 +36,16 @@ const Registration = (props) => {
       .post(REGISTER_URL, querystring.stringify(requestBody), config)
       .then((result) => {
         console.log(result);
+        if (result.data.success) {
+          sessionStorage.setItem('SESSION_ID', result.data.value);
+          sessionStorage.setItem('SESSION_USERNAME', result.data.user);
+          alert('Registration Succesful');
+          // history.push('/');
+          const customHistory = createBrowserHistory();
+          customHistory.push('/');
+        } else {
+          alert("Something's gone wrong, please check again");
+        }
       })
       .catch((err) => {});
   };

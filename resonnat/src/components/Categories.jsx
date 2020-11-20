@@ -12,9 +12,7 @@ import { Fragment } from 'react';
 
 const Categories = () => {
   const { loading, error, data } = useQuery(DFV_NAMES);
-  if (data) {
-    // console.log(data);
-  }
+
   return (
     <Fragment>
       <Card>

@@ -5,7 +5,11 @@ import '../css/Access.css';
 const { default: Registration } = require('./Registration');
 const { default: Login } = require('./Login');
 
-const Access = () => {
+const Access = (props) => {
+  function toggleRelay(logged) {
+    props.toggleLogged(logged);
+  }
+
   return (
     <Fragment>
       <Col
@@ -18,7 +22,7 @@ const Access = () => {
             <Registration />
           </Route>
           <Route exact path="/login">
-            <Login />
+            <Login toggleLogged={toggleRelay} />
           </Route>
         </CardGroup>
       </Col>

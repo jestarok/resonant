@@ -3,16 +3,20 @@ import { Form, Button, Card, Nav } from 'react-bootstrap';
 import axios from 'axios';
 import querystring from 'querystring';
 import { LOGIN_URL } from '../Utils/constants';
+import { useHistory } from 'react-router-dom';
 
 const Login = (props) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isEncrypted, setisEncrypted] = useState(false);
+  let history = useHistory();
+
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    alert(`Submitting Name ${username} Submitting pass ${password}`);
     const requestBody = {
       username: username,
       password: password,
+      encrypted: isEncrypted,
     };
 
     const config = {
@@ -24,7 +28,15 @@ const Login = (props) => {
     axios
       .post(LOGIN_URL, querystring.stringify(requestBody), config)
       .then((result) => {
-        console.log(result);
+        console.log(result.data);
+        if (result.data.success) {
+          sessionStorage.setItem('SESSION_ID', result.data.value);
+          sessionStorage.setItem('SESSION_USERNAME', result.data.user);
+          props.toggleLogged(true);
+          history.goBack();
+        } else {
+          alert('wrong username or password');
+        }
       })
       .catch((err) => {});
   };
@@ -53,7 +65,11 @@ const Login = (props) => {
               />
             </Form.Group>
             <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Remember me" />
+              <Form.Check
+                type="checkbox"
+                label="Encrypted password?"
+                onClick={(e) => setisEncrypted(!isEncrypted)}
+              />
             </Form.Group>
             <Button variant="primary" type="submit">
               Submit
