@@ -3,7 +3,6 @@ import MyNavbar from './MyNavBar.jsx';
 import { Switch, Route } from 'react-router-dom';
 import Catalog from './Catalog.jsx';
 import Access from './Access.jsx';
-import { Container } from 'react-bootstrap';
 
 class Home extends Component {
   constructor(props) {
@@ -22,10 +21,8 @@ class Home extends Component {
       <Fragment>
         <MyNavbar logged={this.state.logged} />
         <Switch>
-          <Route exact path={['/', '/products', '/products/:id']}>
-            {/* <Container fluid> */}
+          <Route exact path={['/', '/products', '/designers', '/products/:id']}>
             <Catalog toggleLogged={this.toggleLogged} />
-            {/* </Container> */}
           </Route>
           <Route path={['/login', '/register']}>
             <Access toggleLogged={this.toggleLogged} />

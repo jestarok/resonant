@@ -1,41 +1,27 @@
 import { Fragment } from 'react';
 import Categories from './Categories';
 import ProductList from './ProductList';
-import { Route, useHistory, Redirect } from 'react-router-dom';
+import DesignerList from './DesignerList';
+import { Route, useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { DESIGNERS } from '../Utils/constants';
 import Product from './Product';
-import { Container } from 'react-bootstrap';
+import PrivateRoute from './PrivateRoute';
 
 const Catalog = () => {
   const { loading, error, data } = useQuery(DESIGNERS);
   let history = useHistory();
-  // if (!sessionStorage.getItem('SESSION_ID')) {
-  //   history.push('/login');
-  // }
+
   return (
     <Fragment>
       <PrivateRoute path="/products/:id" component={Product} />
-
       <PrivateRoute exact path="/products" component={ProductList} />
+      <PrivateRoute exact path="/designers" component={DesignerList} />
       <Route exact path="/">
         <Categories />
       </Route>
     </Fragment>
   );
 };
-
-const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route
-    {...rest}
-    render={(props) =>
-      sessionStorage.getItem('SESSION_ID') ? (
-        <Component {...props} />
-      ) : (
-        <Redirect to="/login" />
-      )
-    }
-  />
-);
 
 export default Catalog;

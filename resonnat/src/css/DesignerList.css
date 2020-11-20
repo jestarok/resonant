@@ -1,0 +1,11 @@
+.designer-card-img {
+  max-width: 20vw;
+  height: 20vw;
+  object-fit: contain;
+  margin: auto;
+}
+
+.designer-card {
+  border: 'none';
+  padding: '2.5vh 0';
+}

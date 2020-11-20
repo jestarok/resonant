@@ -1,4 +1,3 @@
-const AirtableGraphQL = require('airtable-graphql');
 const constants = require('./constants');
 const templates = require('./templates');
 const axios = require('axios').default;
@@ -6,44 +5,21 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
-api = new AirtableGraphQL('key1E9cyPLu4piroN');
-const app = express();
 const { v4: uuidv4 } = require('uuid');
-
+const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
+const AirtableGraphQL = require('airtable-graphql');
+api = new AirtableGraphQL('key1E9cyPLu4piroN');
 
 const aws = require('aws-sdk');
 aws.config.loadFromPath('./config.json');
 const ses = new aws.SES();
 
-// Sending RAW email including an attachment.
-// app.get('/send', function (req, res) {
-//   const email = 'jesus9528@gmail.com';
-//   const ses_mail = templates.ses_mail;
-
-//   const params = {
-//     RawMessage: { Data: new Buffer(ses_mail) },
-//     Destinations: [email],
-//     Source: "'Resonant Marketplace' <" + email + ">'",
-//   };
-
-//   ses.sendRawEmail(params, function (err, data) {
-//     if (err) {
-//       res.send(err);
-//     } else {
-//       res.send(data);
-//     }
-//   });
-// });
-
 app.get('/pictures', cors(), (req, res) => {
   axios
-    .get(
-      'https://api.airtable.com/v0/appzeUDpZOqRjLPaJ/tblk386O2A5yPd04l?fields%5B%5D=Name&fields%5B%5D=Picture',
-      {
-        headers: { Authorization: 'Bearer ' + constants.AIRTABLE_API_TOKEN },
-      }
-    )
+    .get(constants.GET_PICTURES_URL, {
+      headers: { Authorization: 'Bearer ' + constants.AIRTABLE_API_TOKEN },
+    })
     .then(function (response) {
       // handle success
       if (response.data.records.length > 0) {
@@ -114,19 +90,15 @@ app.post('/info', cors(), (req, res) => {
           designer.Background
         );
         ses_mail = ses_mail.split('$Designer').join(designerDetails);
-        // console.log(ses_mail);
       } else {
         ses_mail = ses_mail.split('$Designer').join('');
-        // console.log('no designer ' + ses_mail);
       }
 
-      // send;
       var params = {
         RawMessage: { Data: new Buffer(ses_mail) },
         Destinations: [email],
         Source: "'Resonant Marketplace' <" + email + ">'",
       };
-      // console.log(ses_mail);
       ses.sendRawEmail(params, function (err, data) {
         if (err) {
           res.send(err);
@@ -159,12 +131,10 @@ app.post('/login', cors(), (req, res) => {
     .then(function (response) {
       // handle success
       let foundUser = false;
-      console.log(response.data.records);
       if (response.data.records.length > 0) {
         foundUser = response.data.records.sort(function (a, b) {
           return new Date(b.createdTime) - new Date(a.createdTime);
         })[0];
-        console.log('found one');
       }
 
       if (foundUser) {
@@ -223,7 +193,6 @@ app.post('/login', cors(), (req, res) => {
 });
 
 app.post('/register', cors(), (req, res) => {
-  console.log(req.body.username);
   //find mathing user
   axios
     .get(
@@ -240,7 +209,6 @@ app.post('/register', cors(), (req, res) => {
 
       if (response.data.records.length > 0) {
         res.send('username or email arleady in use');
-        console.log('en uso');
       } else {
         let fields = req.body;
 
@@ -271,8 +239,6 @@ app.post('/register', cors(), (req, res) => {
           )
           .then((result) => {
             // Do something
-            console.log(result.data);
-            console.log(result.data.records);
             let success = result.data.records.length > 0 ? true : false;
             if (success) {
               res.send({

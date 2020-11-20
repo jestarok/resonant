@@ -4,6 +4,7 @@ export const LOGIN_URL = 'http://localhost:5000/login';
 export const REGISTER_URL = 'http://localhost:5000/register';
 export const INFO_URL = 'http://localhost:5000/info';
 export const APOLLO_SERVER = 'http://localhost:5001';
+
 export const FURNITURES = gql`
   query {
     furnitures {
@@ -27,6 +28,7 @@ export const DESIGNERS = gql`
   query {
     designers {
       name
+      background
     }
   }
 `;

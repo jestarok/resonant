@@ -110,7 +110,7 @@ const Product = (props) => {
                   maxHeight: '50vh',
                   objectFit: 'contain',
                 }}
-                alt={'media aviable soon'}
+                alt={'media available soon'}
               />
               {/* <img
                 class="card-img-top img-fluid"

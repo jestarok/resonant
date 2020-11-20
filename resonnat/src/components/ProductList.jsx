@@ -44,7 +44,7 @@ const ProductList = () => {
                       height: '20vw',
                       objectFit: 'contain',
                     }}
-                    alt={'media aviable soon'}
+                    alt={'media available soon'}
                   />
                 </Link>
                 <Card.Body>
@@ -53,26 +53,18 @@ const ProductList = () => {
                     {product.inStock ? (
                       <p className="ml-4 text-success">In Stock</p>
                     ) : (
-                      <p className="ml-4 text-warning">Currently Unaviable</p>
+                      <p className="ml-4 text-warning">Currently Unavailable</p>
                     )}
                     <p className="text-danger font-weight-bold ml-auto mr-4 ">
                       {product.unitCost.replace('undefined', '$')}
                     </p>
                   </Row>
-                  {/* <br /> */}
                   <Card.Text className="text-justify">
                     {product.description.length > 180
                       ? product.description.slice(0, 180) + '...'
                       : product.description}
                   </Card.Text>
                 </Card.Body>
-                {/* <Card.Footer>
-                <small className="text-muted">
-                {pictureData.records
-                  ? pictureData.records[index].fields.Name
-                  : ''}
-                  </small>
-                </Card.Footer> */}
               </Card>
             </Col>
           );

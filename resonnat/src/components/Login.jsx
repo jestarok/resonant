@@ -1,9 +1,9 @@
 import { Fragment, useState } from 'react';
-import { Form, Button, Card, Nav } from 'react-bootstrap';
-import axios from 'axios';
-import querystring from 'querystring';
-import { LOGIN_URL } from '../Utils/constants';
 import { useHistory } from 'react-router-dom';
+import { Form, Button, Card, Nav } from 'react-bootstrap';
+import querystring from 'querystring';
+import axios from 'axios';
+import { LOGIN_URL } from '../Utils/constants';
 
 const Login = (props) => {
   const [username, setUsername] = useState('');
@@ -18,7 +18,6 @@ const Login = (props) => {
       password: password,
       encrypted: isEncrypted,
     };
-
     const config = {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -28,7 +27,6 @@ const Login = (props) => {
     axios
       .post(LOGIN_URL, querystring.stringify(requestBody), config)
       .then((result) => {
-        console.log(result.data);
         if (result.data.success) {
           sessionStorage.setItem('SESSION_ID', result.data.value);
           sessionStorage.setItem('SESSION_USERNAME', result.data.user);
