@@ -10,5 +10,5 @@ module.exports = Object.freeze({
     'https://api.airtable.com/v0/appzeUDpZOqRjLPaJ/Furniture/$PARAMA',
   GET_DESIGNER_URL:
     'https://api.airtable.com/v0/appzeUDpZOqRjLPaJ/Designers/$PARAMA',
-  AIRTABLE_API_TOKEN: 'key1E9cyPLu4piroN',
+  AIRTABLE_API_TOKEN: 'apiKey',
 });

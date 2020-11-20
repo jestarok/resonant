@@ -3,7 +3,10 @@ import f2 from '../static/furniture6.jpg';
 import f3 from '../static/furniture7.jpg';
 import { Card, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+/>;
 const FurnitureCover = () => {
   return (
     <Card>

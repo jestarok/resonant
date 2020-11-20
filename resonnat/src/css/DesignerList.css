@@ -1,11 +1,10 @@
 .designer-card-img {
-  max-width: 20vw;
-  height: 20vw;
+  /* max-width: inherit; */
+  height: initial;
   object-fit: contain;
-  margin: auto;
 }
 
 .designer-card {
   border: 'none';
-  padding: '2.5vh 0';
+  padding: '10vh important';
 }

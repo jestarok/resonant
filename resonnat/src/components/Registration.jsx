@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react';
 import { Form, Button, Card, Nav, Row, Col } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import querystring from 'querystring';
 import { REGISTER_URL } from '../Utils/constants';
@@ -11,12 +12,10 @@ const Registration = (props) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
+  let history = useHistory();
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    //validateFields()
-
-    alert(`Submitting Name ${username}`);
     const requestBody = {
       username: username,
       password: password,
@@ -37,8 +36,8 @@ const Registration = (props) => {
         if (result.data.success) {
           sessionStorage.setItem('SESSION_ID', result.data.value);
           sessionStorage.setItem('SESSION_USERNAME', result.data.user);
-          const customHistory = createBrowserHistory();
-          customHistory.push('/');
+          props.toggleLogged(true);
+          history.push('/');
         } else {
           alert("Something's gone wrong, please check again");
         }

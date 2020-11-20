@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index",
-    "pullschema": "airtable-graphql pull --email=jesus9528@gmail.com --password=Jesram28 --base=appzeUDpZOqRjLPaJ"
+    "pullschema": "airtable-graphql pull --email=jesus9528@gmail.com --password=pass --base=appzeUDpZOqRjLPaJ"
   },
   "author": "jesus henriquez",
   "license": "ISC",

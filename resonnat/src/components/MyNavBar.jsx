@@ -1,11 +1,19 @@
 import React, { Component, Fragment, useEffect, useState } from 'react';
-import { Navbar, Nav, Form, Button } from 'react-bootstrap/';
+import { Navbar, Nav, Form, Button, Breadcrumb } from 'react-bootstrap/';
 import Logo from '../static/logo.png';
 import { createBrowserHistory } from 'history';
 
 const MyNavbar = (props) => {
   let button;
   let name;
+  // let crumbs = {};
+  // if (props.routes) {
+  //   console.log('routes here ' + props.routes);
+  //   crumbs = props.routes.map((route) => {
+  //     return <Breadcrumb.Item href="/">{route}</Breadcrumb.Item>;
+  //   });
+  // }
+  // console.log(crumbs);
   if (props.logged) {
     button = (
       <Nav.Link href="/">
@@ -31,26 +39,36 @@ const MyNavbar = (props) => {
   }
 
   return (
-    <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="/">
-        <img
-          src={Logo}
-          style={{ width: '7vh', height: '7vh', marginRight: '5vh' }}
-          alt="Smiley face"
-        />
-        Resonat Marketplace
-      </Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="mr-auto">
-          <Nav.Link href="/">Home {props.logged}</Nav.Link>
-        </Nav>
-        <Form inline>
-          {name}
-          {button}
-        </Form>
-      </Navbar.Collapse>
-    </Navbar>
+    <Fragment>
+      <Navbar style={{ height: '10vh' }} bg="light" expand="lg">
+        <Navbar.Brand href="/">
+          <img
+            src={Logo}
+            style={{ width: '7vh', height: '7vh', marginRight: '5vh' }}
+            alt="Smiley face"
+          />
+          Resonat Marketplace
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto">
+            {/* <Nav.Link href="/">Home {props.logged}</Nav.Link> */}
+          </Nav>
+          <Form inline>
+            {name}
+            {button}
+          </Form>
+        </Navbar.Collapse>
+      </Navbar>
+
+      {/* <Breadcrumb> */}
+      {/* {crumbs} */}
+      {/* <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
+        <Breadcrumb.Item href="/catalog">Library</Breadcrumb.Item>
+        <Breadcrumb.Item active>Product</Breadcrumb.Item>
+        <Breadcrumb.Item active>Login</Breadcrumb.Item> */}
+      {/* </Breadcrumb> */}
+    </Fragment>
   );
 };
 

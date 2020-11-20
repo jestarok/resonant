@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import { CardGroup, Col } from 'react-bootstrap';
 import { Route } from 'react-router-dom';
 import '../css/Access.css';
@@ -9,6 +9,15 @@ const Access = (props) => {
   function toggleRelay(logged) {
     props.toggleLogged(logged);
   }
+  const changeRoute = props.changeRoute;
+  useEffect(() => {
+    changeRoute({ action: 'add', value: 'Login' });
+
+    return () => {
+      console.log('clean');
+      changeRoute({ action: 'remove', value: 'Login' });
+    };
+  }, [changeRoute]);
 
   return (
     <Fragment>
@@ -19,7 +28,7 @@ const Access = (props) => {
       >
         <CardGroup>
           <Route exact path="/register">
-            <Registration />
+            <Registration toggleLogged={toggleRelay} />
           </Route>
           <Route exact path="/login">
             <Login toggleLogged={toggleRelay} />

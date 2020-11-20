@@ -349,7 +349,7 @@ export const schemas ={
           type= "text",
           options= {}
         }
-      ]
+      ],
     },
     {
       name= "Client Orders",

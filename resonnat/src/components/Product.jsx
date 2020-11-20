@@ -30,7 +30,6 @@ const Product = (props) => {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    alert(`Submitting Name ${email}`);
     const requestBody = {
       email: email,
       product: id,
@@ -45,7 +44,7 @@ const Product = (props) => {
     axios
       .post(INFO_URL, querystring.stringify(requestBody), config)
       .then((result) => {
-        console.log(result);
+        alert('el mensaje ha sido enviado');
       })
       .catch((err) => {});
   };

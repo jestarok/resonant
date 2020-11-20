@@ -55,7 +55,10 @@ const ProductList = () => {
                     ) : (
                       <p className="ml-4 text-warning">Currently Unavailable</p>
                     )}
-                    <p className="text-danger font-weight-bold ml-auto mr-4 ">
+                    <p
+                      className="font-weight-bold ml-auto mr-4"
+                      style={{ backgroundColor: '#b4301c', color: 'white' }}
+                    >
                       {product.unitCost.replace('undefined', '$')}
                     </p>
                   </Row>

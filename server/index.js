@@ -9,7 +9,7 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 const AirtableGraphQL = require('airtable-graphql');
-api = new AirtableGraphQL('key1E9cyPLu4piroN');
+api = new AirtableGraphQL(constants.AIRTABLE_API_TOKEN);
 
 const aws = require('aws-sdk');
 aws.config.loadFromPath('./config.json');
@@ -31,27 +31,21 @@ app.get('/pictures', cors(), (req, res) => {
 });
 
 app.post('/info', cors(), (req, res) => {
-  //find matching username
   axios
     .get(constants.GET_PRODUCT_URL.replace('$PARAMA', req.body.product), {
       headers: { Authorization: 'Bearer ' + constants.AIRTABLE_API_TOKEN },
     })
     .then(async function (response) {
       // handle success
+      const { fields } = response.data;
       let designer;
-      if (response.data.fields.Designer) {
+      if (fields.Designer) {
         await axios
-          .get(
-            constants.GET_DESIGNER_URL.replace(
-              '$PARAMA',
-              response.data.fields.Designer
-            ),
-            {
-              headers: {
-                Authorization: 'Bearer ' + constants.AIRTABLE_API_TOKEN,
-              },
-            }
-          )
+          .get(constants.GET_DESIGNER_URL.replace('$PARAMA', fields.Designer), {
+            headers: {
+              Authorization: 'Bearer ' + constants.AIRTABLE_API_TOKEN,
+            },
+          })
           .then(function (response) {
             designer = response.data.fields;
           });
@@ -60,22 +54,19 @@ app.post('/info', cors(), (req, res) => {
       //format email
       const email = 'jesus9528@gmail.com';
       let ses_mail = '' + templates.PRODUCT_INFO;
-      ses_mail = ses_mail.replace('$productName.', response.data.fields.Name);
-      ses_mail = ses_mail.replace('$productName.', response.data.fields.Name);
-      ses_mail = ses_mail.replace('$productName.', response.data.fields.Name);
-      ses_mail = ses_mail.replace('$productType.', response.data.fields.Type);
+      ses_mail = ses_mail.replace('$productName.', fields.Name);
+      ses_mail = ses_mail.replace('$productName.', fields.Name);
+      ses_mail = ses_mail.replace('$productName.', fields.Name);
+      ses_mail = ses_mail.replace('$productType.', fields.Type);
       ses_mail = ses_mail.replace(
         '$productDimensions.',
-        response.data.fields['Size (WxLxH)']
+        fields['Size (WxLxH)']
       );
       ses_mail = ses_mail.replace(
         '$productMaterials.',
-        response.data.fields['Materials and Finishes']
+        fields['Materials and Finishes']
       );
-      ses_mail = ses_mail.replace(
-        '$productCost.',
-        response.data.fields['Unit Cost']
-      );
+      ses_mail = ses_mail.replace('$productCost.', fields['Unit Cost']);
       ses_mail = ses_mail.replace('$productDimensions.', 'visu chair');
       ses_mail = ses_mail.replace('$email', email);
       ses_mail = ses_mail.replace('$email', email);
@@ -110,14 +101,10 @@ app.post('/info', cors(), (req, res) => {
     .catch(function (error) {
       // handle error
       console.log(error);
-    })
-    .then(function () {
-      // always executed
     });
 });
 
 app.post('/login', cors(), (req, res) => {
-  //find mathing username
   axios
     .get(
       constants.FIND_USER_URL.replace(
@@ -130,9 +117,10 @@ app.post('/login', cors(), (req, res) => {
     )
     .then(function (response) {
       // handle success
+      const { records } = response.data;
       let foundUser = false;
-      if (response.data.records.length > 0) {
-        foundUser = response.data.records.sort(function (a, b) {
+      if (records.length > 0) {
+        foundUser = records.sort(function (a, b) {
           return new Date(b.createdTime) - new Date(a.createdTime);
         })[0];
       }
@@ -149,14 +137,15 @@ app.post('/login', cors(), (req, res) => {
           })
           .then(async function (response) {
             // handle success
-            username = response.data.fields.username;
+            const { fields } = response.data;
+            username = fields.username;
             if (req.body.encrypted == 'true') {
               success = await comparePassword(
                 req.body.password,
-                response.data.fields.Password
+                fields.Password
               );
             } else {
-              success = req.body.password == response.data.fields.Password;
+              success = req.body.password == fields.Password;
             }
           })
           .catch(function (error) {
@@ -186,14 +175,10 @@ app.post('/login', cors(), (req, res) => {
     .catch(function (error) {
       // handle error
       console.log(error);
-    })
-    .then(function () {
-      // always executed
     });
 });
 
 app.post('/register', cors(), (req, res) => {
-  //find mathing user
   axios
     .get(
       constants.FIND_USER_URL.replace(
@@ -206,7 +191,6 @@ app.post('/register', cors(), (req, res) => {
     )
     .then(async function (response) {
       // handle success
-
       if (response.data.records.length > 0) {
         res.send('username or email arleady in use');
       } else {
@@ -238,7 +222,6 @@ app.post('/register', cors(), (req, res) => {
             config
           )
           .then((result) => {
-            // Do something
             let success = result.data.records.length > 0 ? true : false;
             if (success) {
               res.send({
@@ -252,11 +235,9 @@ app.post('/register', cors(), (req, res) => {
                 message: 'Login failed',
                 success: false,
               });
-              // res.send({ message: 'Login failed', login: false });
             }
           })
           .catch((err) => {
-            // Do something
             console.log(err);
           });
       }
@@ -264,9 +245,6 @@ app.post('/register', cors(), (req, res) => {
     .catch(function (error) {
       // handle error
       console.log(error);
-    })
-    .then(function () {
-      // always executed
     });
 });
 
@@ -284,7 +262,6 @@ async function encryptPassword(password) {
   return hash;
 }
 async function comparePassword(password, password2) {
-  // updated
-  const isSame = await bcrypt.compare(password, password2); // updated
+  const isSame = await bcrypt.compare(password, password2);
   return isSame;
 }
